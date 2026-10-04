@@ -26,6 +26,17 @@ export default function Header({ categories }: HeaderProps) {
     }
   }, []);
 
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobileMenuOpen]);
+
   const toggleTheme = () => {
     const nextTheme = theme === 'light' ? 'dark' : 'light';
     setTheme(nextTheme);
@@ -67,9 +78,9 @@ export default function Header({ categories }: HeaderProps) {
               <Bookmark size={20} />
             </NextLink>
 
-            <NextLink href="/admin" title="লগইন">
+            <NextLink href="/admin" title="লগইন" className="btn-login-nav">
               <User size={20} />
-              <span>লগইন</span>
+              <span className="login-text">লগইন</span>
             </NextLink>
           </nav>
         </div>

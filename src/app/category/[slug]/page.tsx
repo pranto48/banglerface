@@ -25,35 +25,35 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   const categoryName = currentCategory ? currentCategory.name_bn : 'সর্বশেষ সংবাদ';
 
   return (
-    <div className="container" style={{ paddingTop: '1.5rem' }}>
+    <div className="home__wrap" style={{ paddingTop: '1.25rem' }}>
       {/* Breadcrumb */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
-        <Link href="/" style={{ color: 'var(--text-sub)' }}>হোম</Link>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.88rem', color: 'var(--pa-muted)', marginBottom: '1rem', flexWrap: 'wrap' }}>
+        <Link href="/" style={{ color: 'var(--text-main)', textDecoration: 'none' }}>হোম</Link>
         <ChevronRight size={14} />
-        <span style={{ color: 'var(--primary)', fontWeight: 600 }}>{categoryName}</span>
+        <span style={{ color: 'var(--primary)', fontWeight: 700 }}>{categoryName}</span>
       </div>
 
       {/* Category Header */}
-      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '14px', padding: '1.5rem', marginBottom: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '6px', padding: '1.25rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
         <div>
-          <h1 style={{ fontSize: '1.85rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '0.25rem' }}>
+          <h1 style={{ fontSize: 'clamp(20px, 4vw, 28px)', fontWeight: 800, color: 'var(--text-main)', marginBottom: '4px' }}>
             {categoryName}
           </h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>
+          <p style={{ color: 'var(--pa-muted)', fontSize: '14px', margin: 0 }}>
             {categoryName} সম্পর্কিত সকল সর্বশেষ সংবাদ, বিশ্লেষণ ও প্রতিবেদন
           </p>
         </div>
-        <span style={{ background: 'var(--border-hover)', color: 'var(--primary)', padding: '0.4rem 0.85rem', borderRadius: '20px', fontWeight: 600, fontSize: '0.9rem' }}>
+        <span style={{ background: 'var(--pa-light)', color: 'var(--primary)', border: '1px solid var(--border-color)', padding: '4px 12px', borderRadius: '20px', fontWeight: 700, fontSize: '13px' }}>
           {articles.length} টি সংবাদ
         </span>
       </div>
 
-      <div className="portal-layout">
+      <div className="home__columns">
         {/* Main Feed */}
-        <div>
+        <div className="home__main">
           {articles.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '4rem 1rem', background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}>
-              <p style={{ fontSize: '1.1rem', color: 'var(--text-muted)' }}>
+            <div style={{ textAlign: 'center', padding: '3rem 1rem', background: 'var(--bg-card)', borderRadius: '4px', border: '1px solid var(--border-color)' }}>
+              <p style={{ fontSize: '1rem', color: 'var(--pa-muted)' }}>
                 এই বিভাগে বর্তমানে কোনো নতুন সংবাদ পাওয়া যায়নি।
               </p>
             </div>
@@ -61,13 +61,13 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
               {/* Featured article */}
               {articles[0] && (
-                <NewsCard article={articles[0]} showExcerpt />
+                <NewsCard article={articles[0]} variant="lg" showExcerpt />
               )}
 
               {/* Grid of other articles */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '1.25rem' }}>
+              <div className="grid grid--2 grid--md-4">
                 {articles.slice(1).map((item) => (
-                  <NewsCard key={item.id || item.slug} article={item} />
+                  <NewsCard key={item.id || item.slug} article={item} variant="sm" />
                 ))}
               </div>
             </div>
