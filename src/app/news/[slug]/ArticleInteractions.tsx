@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Share2, Bookmark, Volume2, Check } from 'lucide-react';
+import { Share2, Bookmark, Volume2, Check, Printer } from 'lucide-react';
 import { Article } from '@/lib/types';
 
 interface ArticleInteractionsProps {
@@ -12,6 +12,7 @@ export default function ArticleInteractions({ article }: ArticleInteractionsProp
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [isReading, setIsReading] = useState(false);
+  const [fontSize, setFontSize] = useState(18);
 
   useEffect(() => {
     try {
@@ -60,7 +61,7 @@ export default function ArticleInteractions({ article }: ArticleInteractionsProp
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
       await navigator.clipboard.writeText(window.location.href);
       setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000);
+      setTimeout(() => setIsCopied(false), 2500);
     }
   };
 
@@ -76,7 +77,7 @@ export default function ArticleInteractions({ article }: ArticleInteractionsProp
       return;
     }
 
-    const textToRead = `${article.title}. ${article.excerpt}`;
+    const textToRead = `${article.title}. ${article.excerpt || ''}`;
     const utterance = new SpeechSynthesisUtterance(textToRead);
     utterance.lang = 'bn-BD';
     utterance.rate = 0.95;
@@ -88,8 +89,17 @@ export default function ArticleInteractions({ article }: ArticleInteractionsProp
     setIsReading(true);
   };
 
+  const changeFontSize = (delta: number) => {
+    const newSize = Math.min(Math.max(fontSize + delta, 15), 24);
+    setFontSize(newSize);
+    const contentEl = document.querySelector('.article-content-post') as HTMLElement | null;
+    if (contentEl) {
+      contentEl.style.fontSize = `${newSize}px`;
+    }
+  };
+
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', position: 'relative' }}>
       {/* Audio Reader */}
       <button
         type="button"
@@ -102,6 +112,28 @@ export default function ArticleInteractions({ article }: ArticleInteractionsProp
         <span>{isReading ? 'বন্ধ করুন' : 'শুনুন'}</span>
       </button>
 
+      {/* Font Size Adjusters */}
+      <div className="font-size-control-group">
+        <button
+          type="button"
+          onClick={() => changeFontSize(-1)}
+          className="btn-font-size"
+          title="অক্ষর ছোট করুন"
+          aria-label="অক্ষর ছোট করুন"
+        >
+          A-
+        </button>
+        <button
+          type="button"
+          onClick={() => changeFontSize(1)}
+          className="btn-font-size"
+          title="অক্ষর বড় করুন"
+          aria-label="অক্ষর বড় করুন"
+        >
+          A+
+        </button>
+      </div>
+
       {/* Bookmark */}
       <button
         type="button"
@@ -109,19 +141,39 @@ export default function ArticleInteractions({ article }: ArticleInteractionsProp
         className="btn-icon"
         style={{ color: isBookmarked ? 'var(--primary)' : 'currentColor' }}
         title={isBookmarked ? 'বুকমার্ক সরান' : 'বুকমার্ক করুন'}
+        aria-label="বুকমার্ক"
       >
         <Bookmark size={18} fill={isBookmarked ? 'currentColor' : 'none'} />
       </button>
 
-      {/* Share */}
+      {/* Share / Copy */}
       <button
         type="button"
         onClick={handleShare}
         className="btn-icon"
         title="লিংক কপি বা শেয়ার করুন"
+        aria-label="লিংক কপি বা শেয়ার"
       >
         {isCopied ? <Check size={18} color="#10b981" /> : <Share2 size={18} />}
       </button>
+
+      {/* Print */}
+      <button
+        type="button"
+        onClick={() => typeof window !== 'undefined' && window.print()}
+        className="btn-icon print-hide"
+        title="প্রিন্ট করুন"
+        aria-label="প্রিন্ট"
+      >
+        <Printer size={18} />
+      </button>
+
+      {/* Floating Toast Notification */}
+      {isCopied && (
+        <div className="share-toast">
+          ✓ লিংক কপি হয়েছে!
+        </div>
+      )}
     </div>
   );
 }

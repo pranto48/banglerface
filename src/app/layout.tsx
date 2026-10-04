@@ -3,6 +3,7 @@ import { Hind_Siliguri, Outfit } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import BackToTop from '@/components/BackToTop';
 import { getCategories } from '@/lib/api';
 
 const hindSiliguri = Hind_Siliguri({
@@ -95,6 +96,7 @@ export default async function RootLayout({
         <Header categories={categories} />
         <main id="main-content">{children}</main>
         <Footer />
+        <BackToTop />
       </body>
     </html>
   );

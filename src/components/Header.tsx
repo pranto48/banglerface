@@ -5,6 +5,8 @@ import NextLink from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Search, User, Moon, Sun, Menu, X, Globe, Bookmark, Home, LayoutGrid } from 'lucide-react';
 import { Category } from '@/lib/types';
+import BengaliDate from '@/components/BengaliDate';
+import QuickSearchModal from '@/components/QuickSearchModal';
 
 interface HeaderProps {
   categories: Category[];
@@ -14,6 +16,7 @@ export default function Header({ categories }: HeaderProps) {
   const pathname = usePathname();
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('banglarface_theme') as 'light' | 'dark' | null;
@@ -60,9 +63,15 @@ export default function Header({ categories }: HeaderProps) {
 
           {/* User Menu & Search */}
           <nav className="top-bar-actions" aria-label="ইউজার মেনু">
-            <NextLink href="/search" aria-label="খুঁজুন" title="খুঁজুন">
+            <button
+              type="button"
+              onClick={() => setIsSearchOpen(true)}
+              className="btn-icon-nav"
+              aria-label="খুঁজুন"
+              title="খুঁজুন (Quick Search)"
+            >
               <Search size={20} />
-            </NextLink>
+            </button>
 
             <button
               type="button"
@@ -85,6 +94,9 @@ export default function Header({ categories }: HeaderProps) {
           </nav>
         </div>
       </header>
+
+      {/* Live Bengali Date & Edition Bar */}
+      <BengaliDate />
 
       {/* 2. NAV BAR (Horizontal Categories) */}
       <nav className="nav-bar" aria-label="প্রধান মেনু">
@@ -215,10 +227,15 @@ export default function Header({ categories }: HeaderProps) {
           <span>বিভাগ</span>
         </button>
 
-        <NextLink href="/search" className={`bottom-bar-item ${pathname === '/search' ? 'active' : ''}`}>
+        <button
+          type="button"
+          onClick={() => setIsSearchOpen(true)}
+          className={`bottom-bar-item ${pathname === '/search' ? 'active' : ''}`}
+          aria-label="সার্চ"
+        >
           <Search size={19} />
           <span>সার্চ</span>
-        </NextLink>
+        </button>
 
         <NextLink href="/bookmarks" className={`bottom-bar-item ${pathname === '/bookmarks' ? 'active' : ''}`}>
           <Bookmark size={19} />
@@ -235,6 +252,9 @@ export default function Header({ categories }: HeaderProps) {
           <span>থিম</span>
         </button>
       </nav>
+
+      {/* Quick Search Modal */}
+      <QuickSearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </>
   );
 }
