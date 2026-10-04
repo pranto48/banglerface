@@ -10,6 +10,8 @@ interface NewsPageProps {
   }>;
 }
 
+export const revalidate = 120;
+
 export default async function NewsDetailsPage({ params }: NewsPageProps) {
   const { slug } = await params;
   const article = await getArticleBySlug(slug);

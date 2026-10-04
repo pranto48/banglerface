@@ -12,6 +12,8 @@ interface CategoryPageProps {
   }>;
 }
 
+export const revalidate = 60;
+
 export default async function CategoryPage({ params }: CategoryPageProps) {
   const { slug } = await params;
   const categories = await getCategories();

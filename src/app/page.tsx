@@ -7,6 +7,8 @@ import NewsCard from '@/components/NewsCard';
 import Sidebar from '@/components/Sidebar';
 import { getArticles, getCategories, getBreakingNews, getLeadArticle } from '@/lib/api';
 
+export const revalidate = 60;
+
 export default async function HomePage() {
   const [categories, articles, breakingItems, leadArticle] = await Promise.all([
     getCategories(),
