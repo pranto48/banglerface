@@ -19,8 +19,11 @@ export default async function HomePage() {
   const bangladeshNews = articles.filter((a) => a.category?.slug === 'bangladesh');
   const economyNews = articles.filter((a) => a.category?.slug === 'the-economy');
   const countrywideNews = articles.filter((a) => a.category?.slug === 'the-whole-country');
-  const politicsNews = articles.filter((a) => a.category?.slug === 'politics');
+  const internationalNews = articles.filter((a) => a.category?.slug === 'international');
+  const entertainmentNews = articles.filter((a) => a.category?.slug === 'entertainment');
+  const educationNews = articles.filter((a) => a.category?.slug === 'education');
   const editorialNews = articles.filter((a) => a.category?.slug === 'editorial');
+  const politicsNews = articles.filter((a) => a.category?.slug === 'politics');
   const specialReportNews = articles.filter((a) => a.category?.slug === 'special-report');
   const sportsNews = articles.filter((a) => a.category?.slug === 'sports');
 
@@ -30,141 +33,222 @@ export default async function HomePage() {
     .slice(0, 5);
 
   return (
-    <div className="container" style={{ paddingTop: '0.35rem' }}>
-      {/* 1. BREAKING NEWS TICKER */}
-      <Ticker items={breakingItems} />
+    <main className="home">
+      <div className="home__wrap">
+        {/* 1. TICKER */}
+        <Ticker items={breakingItems} />
 
-      {/* 2. LEAD / HERO SECTION */}
-      <LeadSection leadArticle={leadArticle} sideArticles={sideLeadArticles} />
+        {/* 2. LEAD / HERO SECTION */}
+        <LeadSection leadArticle={leadArticle} sideArticles={sideLeadArticles} />
 
-      {/* 3. MAIN CONTENT COLUMNS + SIDEBAR */}
-      <div className="portal-layout">
-        {/* Main Content Feeds */}
-        <div className="feed-sections" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-          
-          {/* SECTION: বাংলাদেশ (BANGLADESH) */}
-          <section style={{ contentVisibility: 'auto', containIntrinsicSize: '300px' }}>
-            <div className="section-header">
-              <h2 className="section-title">বাংলাদেশ</h2>
-              <Link href="/category/bangladesh" className="section-more-link">
-                <span>সব দেখুন</span>
-                <ChevronRight size={16} />
-              </Link>
-            </div>
+        {/* 3. COLUMNS WRAPPER (MAIN FEEDS + SIDEBAR) */}
+        <div className="home__columns">
+          <div className="home__main">
+            {/* 1. বাংলাদেশ (BANGLADESH) */}
+            <section className="home__section">
+              <div className="section-heading">
+                <h2 className="section-heading__title">বাংলাদেশ</h2>
+                <Link href="/category/bangladesh" className="section-heading__more">
+                  সব দেখুন
+                  <ChevronRight size={15} />
+                </Link>
+              </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
-              {bangladeshNews.slice(0, 1).map((item) => (
-                <div key={item.id}>
-                  <NewsCard article={item} showExcerpt />
+              <div className="split">
+                {(bangladeshNews[0] ? [bangladeshNews[0]] : articles.slice(0, 1)).map((item) => (
+                  <NewsCard key={item.id} article={item} variant="lg" showExcerpt />
+                ))}
+
+                <div>
+                  {(bangladeshNews.length > 1 ? bangladeshNews.slice(1, 5) : articles.slice(1, 5)).map((item) => (
+                    <NewsCard key={item.id} article={item} variant="item" showThumb />
+                  ))}
                 </div>
-              ))}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-                {(bangladeshNews.length > 1 ? bangladeshNews.slice(1, 4) : articles.slice(2, 5)).map((item) => (
-                  <NewsCard key={item.id} article={item} variant="horizontal" />
+              </div>
+            </section>
+
+            {/* 2. অর্থনীতি (THE ECONOMY) */}
+            <section className="home__section">
+              <div className="section-heading">
+                <h2 className="section-heading__title">অর্থনীতি</h2>
+                <Link href="/category/the-economy" className="section-heading__more">
+                  সব দেখুন
+                  <ChevronRight size={15} />
+                </Link>
+              </div>
+
+              <div className="grid grid--2 grid--md-4">
+                {(economyNews.length >= 4 ? economyNews.slice(0, 4) : articles.slice(0, 4)).map((item) => (
+                  <NewsCard key={item.id} article={item} variant="sm" />
                 ))}
               </div>
-            </div>
-          </section>
+            </section>
 
-          {/* SECTION: অর্থনীতি (ECONOMY) */}
-          <section style={{ contentVisibility: 'auto', containIntrinsicSize: '300px' }}>
-            <div className="section-header">
-              <h2 className="section-title">অর্থনীতি</h2>
-              <Link href="/category/the-economy" className="section-more-link">
-                <span>সব দেখুন</span>
-                <ChevronRight size={16} />
-              </Link>
-            </div>
+            {/* 3. সারাদেশে (THE WHOLE COUNTRY - SCROLLER) */}
+            <section className="home__section">
+              <div className="section-heading">
+                <h2 className="section-heading__title">সারাদেশ</h2>
+                <Link href="/category/the-whole-country" className="section-heading__more">
+                  সব দেখুন
+                  <ChevronRight size={15} />
+                </Link>
+              </div>
 
-            <div className="grid-4">
-              {(economyNews.length > 0 ? economyNews : articles.slice(0, 4)).map((item) => (
-                <NewsCard key={item.id} article={item} />
-              ))}
-            </div>
-          </section>
-
-          {/* SECTION: সারাদেশে (COUNTRYWIDE SCROLLER) */}
-          <section style={{ contentVisibility: 'auto', containIntrinsicSize: '260px' }}>
-            <div className="section-header">
-              <h2 className="section-title">সারাদেশ</h2>
-              <Link href="/category/the-whole-country" className="section-more-link">
-                <span>সব দেখুন</span>
-                <ChevronRight size={16} />
-              </Link>
-            </div>
-
-            <div className="scroller-wrapper">
-              {(countrywideNews.length > 0 ? countrywideNews.concat(articles) : articles)
-                .slice(0, 6)
-                .map((item, idx) => (
-                  <div key={idx} className="scroller-item">
-                    <NewsCard article={item} />
-                  </div>
-                ))}
-            </div>
-          </section>
-
-          {/* SECTION: রাজনীতি ও সম্পাদকীয় (POLITICS & EDITORIAL) */}
-          <section style={{ contentVisibility: 'auto', containIntrinsicSize: '300px' }}>
-            <div className="section-header">
-              <h2 className="section-title">সম্পাদকীয় ও মতামত</h2>
-              <Link href="/category/editorial" className="section-more-link">
-                <span>সব দেখুন</span>
-                <ChevronRight size={16} />
-              </Link>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
-              {(editorialNews.length > 0 ? editorialNews : articles.slice(3, 5)).map((item) => (
-                <NewsCard key={item.id} article={item} showExcerpt />
-              ))}
-            </div>
-          </section>
-
-          {/* SECTION: বিশেষ প্রতিবেদন (SPECIAL REPORT) */}
-          <section style={{ contentVisibility: 'auto', containIntrinsicSize: '300px' }}>
-            <div className="section-header">
-              <h2 className="section-title">বিশেষ প্রতিবেদন</h2>
-              <Link href="/category/special-report" className="section-more-link">
-                <span>সব দেখুন</span>
-                <ChevronRight size={16} />
-              </Link>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
-              {specialReportNews.slice(0, 1).map((item) => (
-                <NewsCard key={item.id} article={item} showExcerpt />
-              ))}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-                {(specialReportNews.length > 1 ? specialReportNews.slice(1, 4) : articles.slice(4, 7)).map((item) => (
-                  <NewsCard key={item.id} article={item} variant="horizontal" />
+              <div className="scroller">
+                {(countrywideNews.length > 0 ? countrywideNews : articles.slice(2, 7)).slice(0, 6).map((item) => (
+                  <NewsCard key={item.id} article={item} variant="sm" />
                 ))}
               </div>
-            </div>
-          </section>
+            </section>
 
-          {/* SECTION: খেলাধুলা (SPORTS) */}
-          <section style={{ contentVisibility: 'auto', containIntrinsicSize: '300px' }}>
-            <div className="section-header">
-              <h2 className="section-title">খেলা</h2>
-              <Link href="/category/sports" className="section-more-link">
-                <span>সব দেখুন</span>
-                <ChevronRight size={16} />
-              </Link>
-            </div>
+            {/* 4. আন্তর্জাতিক (INTERNATIONAL) */}
+            <section className="home__section">
+              <div className="section-heading">
+                <h2 className="section-heading__title">আন্তর্জাতিক</h2>
+                <Link href="/category/international" className="section-heading__more">
+                  সব দেখুন
+                  <ChevronRight size={15} />
+                </Link>
+              </div>
 
-            <div className="grid-4">
-              {(sportsNews.length > 0 ? sportsNews : articles.slice(1, 5)).map((item) => (
-                <NewsCard key={item.id} article={item} />
-              ))}
-            </div>
-          </section>
+              <div className="grid grid--md-2">
+                {(internationalNews[0] ? [internationalNews[0]] : articles.slice(3, 4)).map((item) => (
+                  <NewsCard key={item.id} article={item} variant="md" showExcerpt />
+                ))}
 
+                <div>
+                  {(internationalNews.length > 1 ? internationalNews.slice(1, 5) : articles.slice(0, 4)).map((item) => (
+                    <NewsCard key={item.id} article={item} variant="item" showThumb={false} />
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* 5. বিনোদন (ENTERTAINMENT) */}
+            <section className="home__section">
+              <div className="section-heading">
+                <h2 className="section-heading__title">বিনোদন</h2>
+                <Link href="/category/entertainment" className="section-heading__more">
+                  সব দেখুন
+                  <ChevronRight size={15} />
+                </Link>
+              </div>
+
+              <div className="split">
+                {(entertainmentNews[0] ? [entertainmentNews[0]] : articles.slice(1, 2)).map((item) => (
+                  <NewsCard key={item.id} article={item} variant="lg" showExcerpt />
+                ))}
+
+                <div>
+                  {(entertainmentNews.length > 1 ? entertainmentNews.slice(1, 5) : articles.slice(2, 6)).map((item) => (
+                    <NewsCard key={item.id} article={item} variant="item" showThumb />
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* 6. শিক্ষা (EDUCATION) */}
+            <section className="home__section">
+              <div className="section-heading">
+                <h2 className="section-heading__title">শিক্ষা</h2>
+                <Link href="/category/education" className="section-heading__more">
+                  সব দেখুন
+                  <ChevronRight size={15} />
+                </Link>
+              </div>
+
+              <div className="grid grid--2 grid--md-4">
+                {(educationNews.length >= 4 ? educationNews.slice(0, 4) : articles.slice(1, 5)).map((item) => (
+                  <NewsCard key={item.id} article={item} variant="sm" />
+                ))}
+              </div>
+            </section>
+
+            {/* 7. সম্পাদকীয় (EDITORIAL - SCROLLER) */}
+            <section className="home__section">
+              <div className="section-heading">
+                <h2 className="section-heading__title">সম্পাদকীয়</h2>
+                <Link href="/category/editorial" className="section-heading__more">
+                  সব দেখুন
+                  <ChevronRight size={15} />
+                </Link>
+              </div>
+
+              <div className="scroller">
+                {(editorialNews.length > 0 ? editorialNews : articles.slice(3, 7)).slice(0, 5).map((item) => (
+                  <NewsCard key={item.id} article={item} variant="sm" />
+                ))}
+              </div>
+            </section>
+
+            {/* 8. রাজনীতি (POLITICS) */}
+            <section className="home__section">
+              <div className="section-heading">
+                <h2 className="section-heading__title">রাজনীতি</h2>
+                <Link href="/category/politics" className="section-heading__more">
+                  সব দেখুন
+                  <ChevronRight size={15} />
+                </Link>
+              </div>
+
+              <div className="grid grid--md-2">
+                {(politicsNews[0] ? [politicsNews[0]] : articles.slice(4, 5)).map((item) => (
+                  <NewsCard key={item.id} article={item} variant="md" showExcerpt />
+                ))}
+
+                <div>
+                  {(politicsNews.length > 1 ? politicsNews.slice(1, 5) : articles.slice(2, 6)).map((item) => (
+                    <NewsCard key={item.id} article={item} variant="item" showThumb={false} />
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* 9. বিশেষ প্রতিবেদন (SPECIAL REPORT) */}
+            <section className="home__section">
+              <div className="section-heading">
+                <h2 className="section-heading__title">বিশেষ প্রতিবেদন</h2>
+                <Link href="/category/special-report" className="section-heading__more">
+                  সব দেখুন
+                  <ChevronRight size={15} />
+                </Link>
+              </div>
+
+              <div className="split">
+                {(specialReportNews[0] ? [specialReportNews[0]] : articles.slice(0, 1)).map((item) => (
+                  <NewsCard key={item.id} article={item} variant="lg" showExcerpt />
+                ))}
+
+                <div>
+                  {(specialReportNews.length > 1 ? specialReportNews.slice(1, 5) : articles.slice(3, 7)).map((item) => (
+                    <NewsCard key={item.id} article={item} variant="item" showThumb />
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* 10. খেলা (SPORTS) */}
+            <section className="home__section">
+              <div className="section-heading">
+                <h2 className="section-heading__title">খেলা</h2>
+                <Link href="/category/sports" className="section-heading__more">
+                  সব দেখুন
+                  <ChevronRight size={15} />
+                </Link>
+              </div>
+
+              <div className="grid grid--2 grid--md-4">
+                {(sportsNews.length >= 4 ? sportsNews.slice(0, 4) : articles.slice(0, 4)).map((item) => (
+                  <NewsCard key={item.id} article={item} variant="sm" />
+                ))}
+              </div>
+            </section>
+          </div>
+
+          {/* Right Sidebar */}
+          <Sidebar categories={categories} />
         </div>
-
-        {/* Sidebar */}
-        <Sidebar categories={categories} />
       </div>
-    </div>
+    </main>
   );
 }

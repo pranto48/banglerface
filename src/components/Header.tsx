@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import NextLink from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Search, User, Moon, Sun, Menu, X, Globe, Bookmark, PlusCircle, Home, LayoutGrid } from 'lucide-react';
+import { Search, User, Moon, Sun, Menu, X, Globe, Bookmark, Home, LayoutGrid } from 'lucide-react';
 import { Category } from '@/lib/types';
 
 interface HeaderProps {
@@ -37,211 +37,159 @@ export default function Header({ categories }: HeaderProps) {
     <>
       {/* 1. TOP BAR */}
       <header className="top-bar">
-        <div className="container">
-          <div className="top-bar-inner">
-            {/* Brand Logo & Tagline */}
-            <NextLink href="/" className="brand-wrapper">
-              <div className="brand-logo-badge">
-                <span>বা</span>
-              </div>
-              <div className="brand-text-col">
-                <span className="brand-title">বাংলার ফেস</span>
-                <span className="brand-tagline">নির্ভরযোগ্য খবর বিশ্বস্ত মাধ্যম</span>
-              </div>
+        <div className="top-bar-content">
+          {/* Exact BanglarFace Logo */}
+          <NextLink href="/" className="top-bar-brand" aria-label="বাংলার ফেস">
+            <img
+              src="https://banglarface.com/uploads/settings/logo_1786447333_6a7b05e546bbe.png"
+              alt="বাংলার ফেস"
+              className="logo"
+            />
+          </NextLink>
+
+          {/* User Menu & Search */}
+          <nav className="top-bar-actions" aria-label="ইউজার মেনু">
+            <NextLink href="/search" aria-label="খুঁজুন" title="খুঁজুন">
+              <Search size={20} />
             </NextLink>
 
-            {/* Header Right Actions */}
-            <div className="header-actions">
-              {/* Quick Search */}
-              <NextLink href="/search" className="btn-icon" aria-label="খুঁজুন" title="খুঁজুন">
-                <Search size={18} />
-              </NextLink>
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="btn-theme"
+              title={theme === 'dark' ? 'লাইট মোড' : 'ডার্ক মোড'}
+              aria-label="থিম"
+            >
+              {theme === 'dark' ? <Sun size={19} color="#f59e0b" /> : <Moon size={19} />}
+            </button>
 
-              {/* Bookmarks */}
-              <NextLink href="/bookmarks" className="btn-icon" aria-label="বুকমার্ক" title="সংরক্ষিত সংবাদ">
-                <Bookmark size={18} />
-              </NextLink>
+            <NextLink href="/bookmarks" title="বুকমার্ক" aria-label="বুকমার্ক">
+              <Bookmark size={20} />
+            </NextLink>
 
-              {/* Dark/Light Mode Toggle */}
-              <button
-                type="button"
-                onClick={toggleTheme}
-                className="btn-icon"
-                aria-label="থিম পরিবর্তন"
-                title={theme === 'dark' ? 'লাইট মোড চালু করুন' : 'ডার্ক মোড চালু করুন'}
-              >
-                {theme === 'dark' ? <Sun size={18} color="#f59e0b" /> : <Moon size={18} />}
-              </button>
-
-              {/* CMS Admin Link */}
-              <NextLink href="/admin" className="btn-icon" aria-label="সংবাদ প্রকাশ" title="সংবাদ প্রকাশ করুন">
-                <PlusCircle size={18} color="#ef4444" />
-              </NextLink>
-
-              {/* Login / Auth */}
-              <NextLink href="/admin" className="btn-login" title="লগইন / ড্যাশবোর্ড">
-                <User size={16} />
-                <span>লগইন</span>
-              </NextLink>
-
-              {/* Mobile Hamburger Toggle */}
-              <button
-                type="button"
-                onClick={() => setIsMobileMenuOpen(true)}
-                className="btn-icon mobile-menu-btn"
-                aria-label="মেনু খুলুন"
-                title="মেনু"
-              >
-                <Menu size={19} />
-              </button>
-            </div>
-          </div>
+            <NextLink href="/admin" title="লগইন">
+              <User size={20} />
+              <span>লগইন</span>
+            </NextLink>
+          </nav>
         </div>
       </header>
 
-      {/* 2. CATEGORY NAVIGATION BAR */}
-      <nav className="category-nav" aria-label="প্রধান মেনু">
-        <div className="container">
-          <div className="category-nav-inner">
-            <ul className="nav-links">
-              <li>
-                <NextLink
-                  href="/"
-                  className={`nav-link-item ${pathname === '/' ? 'active' : ''}`}
-                >
-                  সর্বশেষ
-                </NextLink>
-              </li>
-              {categories
-                .filter((c) => c.slug !== 'latest')
-                .map((cat) => {
-                  const href = `/category/${cat.slug}`;
-                  const isActive = pathname === href;
-                  return (
-                    <li key={cat.id || cat.slug}>
-                      <NextLink href={href} className={`nav-link-item ${isActive ? 'active' : ''}`}>
-                        {cat.name_bn}
-                      </NextLink>
-                    </li>
-                  );
-                })}
-            </ul>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', paddingLeft: '0.75rem' }}>
-              <NextLink
-                href="/lang/en"
-                className="btn-icon"
-                style={{ width: '32px', height: '32px' }}
-                title="English Version"
-                aria-label="English"
-              >
-                <Globe size={15} />
-              </NextLink>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      {/* 3. MOBILE FULLSCREEN DRAWER */}
-      {isMobileMenuOpen && (
-        <div className="mobile-menu-overlay" onClick={() => setIsMobileMenuOpen(false)}>
-          <div className="mobile-menu-drawer" onClick={(e) => e.stopPropagation()}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.75rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <div className="brand-logo-badge" style={{ width: '32px', height: '32px', fontSize: '1.1rem' }}>
-                  বা
-                </div>
-                <span style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-main)' }}>
-                  বাংলার ফেস
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="btn-icon"
-                aria-label="মেনু বন্ধ করুন"
-              >
-                <X size={19} />
-              </button>
-            </div>
-
-            <NextLink
-              href="/search"
-              onClick={() => setIsMobileMenuOpen(false)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.75rem',
-                padding: '0.7rem 0.85rem',
-                background: 'var(--bg-main)',
-                borderRadius: '10px',
-                marginBottom: '1rem',
-                color: 'var(--text-sub)',
-                border: '1px solid var(--border-subtle)',
-                fontSize: '0.92rem',
-              }}
-            >
-              <Search size={17} color="var(--primary)" />
-              <span>সংবাদ খুঁজুন...</span>
-            </NextLink>
-
-            <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
-              ক্যাটাগরিসমূহ
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', overflowY: 'auto' }}>
+      {/* 2. NAV BAR (Horizontal Categories) */}
+      <nav className="nav-bar" aria-label="প্রধান মেনু">
+        <div className="nav-bar-content">
+          <ul className="nav-items">
+            <li className="nav-item">
               <NextLink
                 href="/"
-                onClick={() => setIsMobileMenuOpen(false)}
-                style={{
-                  padding: '0.65rem 0.75rem',
-                  borderRadius: '8px',
-                  fontWeight: 600,
-                  fontSize: '0.98rem',
-                  color: pathname === '/' ? 'var(--primary)' : 'var(--text-main)',
-                  background: pathname === '/' ? 'var(--primary-subtle)' : 'transparent',
-                }}
+                className={`nav-link ${pathname === '/' ? 'active' : ''}`}
               >
                 সর্বশেষ
               </NextLink>
+            </li>
+            {categories
+              .filter((c) => c.slug !== 'latest')
+              .map((cat) => {
+                const href = `/category/${cat.slug}`;
+                const isActive = pathname === href;
+                return (
+                  <li key={cat.id || cat.slug} className="nav-item">
+                    <NextLink href={href} className={`nav-link ${isActive ? 'active' : ''}`}>
+                      {cat.name_bn}
+                    </NextLink>
+                  </li>
+                );
+              })}
+          </ul>
+
+          <div className="nav-controls">
+            <NextLink href="/lang/en" className="lang-icon-btn" title="English" aria-label="English">
+              <Globe size={18} />
+            </NextLink>
+
+            <button
+              type="button"
+              className="hamburger-btn"
+              onClick={() => setIsMobileMenuOpen(true)}
+              title="মেনু"
+              aria-label="মেনু"
+            >
+              <Menu size={22} />
+            </button>
+          </div>
+        </div>
+
+        {/* 3. FULL SCREEN MENU DRAWER */}
+        {isMobileMenuOpen && (
+          <div className="fullscreen-menu" onClick={() => setIsMobileMenuOpen(false)}>
+            <div className="menu-content" onClick={(e) => e.stopPropagation()}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', borderBottom: '1px solid var(--border-color)', paddingBottom: '10px' }}>
+                <img
+                  src="https://banglarface.com/uploads/settings/logo_1786447333_6a7b05e546bbe.png"
+                  alt="বাংলার ফেস"
+                  style={{ height: '34px', width: 'auto' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  style={{ color: 'var(--text-main)', padding: '4px' }}
+                >
+                  <X size={22} />
+                </button>
+              </div>
+
+              <NextLink
+                href="/"
+                className="menu-link"
+                onClick={() => setIsMobileMenuOpen(false)}
+                style={{ fontWeight: 700, color: pathname === '/' ? 'var(--primary)' : 'inherit' }}
+              >
+                সর্বশেষ
+              </NextLink>
+
+              <div className="menu-divider">ক্যাটাগরি</div>
+
               {categories
                 .filter((c) => c.slug !== 'latest')
                 .map((cat) => (
                   <NextLink
                     key={cat.id || cat.slug}
                     href={`/category/${cat.slug}`}
+                    className="menu-link"
                     onClick={() => setIsMobileMenuOpen(false)}
                     style={{
-                      padding: '0.65rem 0.75rem',
-                      borderRadius: '8px',
-                      fontSize: '0.98rem',
+                      color: pathname === `/category/${cat.slug}` ? 'var(--primary)' : 'inherit',
                       fontWeight: pathname === `/category/${cat.slug}` ? 700 : 500,
-                      color: pathname === `/category/${cat.slug}` ? 'var(--primary)' : 'var(--text-main)',
-                      background: pathname === `/category/${cat.slug}` ? 'var(--primary-subtle)' : 'transparent',
                     }}
                   >
                     {cat.name_bn}
                   </NextLink>
                 ))}
-            </div>
 
-            <div style={{ marginTop: 'auto', paddingTop: '1.25rem', borderTop: '1px solid var(--border-subtle)', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+              <div className="menu-divider">অন্যান্য</div>
+
+              <NextLink
+                href="/search"
+                className="menu-link"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                সার্চ
+              </NextLink>
+
               <NextLink
                 href="/admin"
+                className="menu-link"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="btn-login"
-                style={{ justifyContent: 'center', padding: '0.75rem' }}
               >
-                <PlusCircle size={18} />
-                <span>সংবাদ পোস্ট করুন (CMS)</span>
+                পোস্ট পাবলিশার (CMS)
               </NextLink>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </nav>
 
-      {/* 4. MOBILE BOTTOM BAR (Thumb-friendly navigation on phones) */}
-      <nav className="mobile-bottom-bar" aria-label="মোবাইল নেভিগেশন">
+      {/* 4. MOBILE BOTTOM BAR */}
+      <nav className="mobile-bottom-bar" aria-label="মোবাইল বার">
         <NextLink href="/" className={`bottom-bar-item ${pathname === '/' ? 'active' : ''}`}>
           <Home size={19} />
           <span>মূলপাতা</span>
@@ -258,7 +206,7 @@ export default function Header({ categories }: HeaderProps) {
 
         <NextLink href="/search" className={`bottom-bar-item ${pathname === '/search' ? 'active' : ''}`}>
           <Search size={19} />
-          <span>অনুসন্ধান</span>
+          <span>সার্চ</span>
         </NextLink>
 
         <NextLink href="/bookmarks" className={`bottom-bar-item ${pathname === '/bookmarks' ? 'active' : ''}`}>

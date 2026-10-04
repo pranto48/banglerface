@@ -2,104 +2,105 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { Clock } from 'lucide-react';
 import { Article } from '@/lib/types';
 
 interface NewsCardProps {
   article: Article;
-  variant?: 'small' | 'medium' | 'horizontal';
+  variant?: 'sm' | 'md' | 'lg' | 'item' | 'horizontal';
+  rank?: number;
   showExcerpt?: boolean;
+  showThumb?: boolean;
 }
 
 export default function NewsCard({
   article,
-  variant = 'small',
+  variant = 'sm',
+  rank,
   showExcerpt = false,
+  showThumb = true,
 }: NewsCardProps) {
   const [imgLoaded, setImgLoaded] = useState(false);
   const timeFormatted = getTimeAgo(article.published_at);
+  const defaultFallbackImage = 'https://banglarface.com/uploads/settings/logo_1786447333_6a7b05e546bbe.png';
 
-  if (variant === 'horizontal') {
+  // If variant is item, horizontal, or has a rank number (used in lists and sidebars)
+  if (variant === 'item' || variant === 'horizontal' || rank !== undefined) {
     return (
-      <article className="news-item-horizontal">
-        <div className="news-item-body">
-          <Link href={`/news/${article.slug}`} className="news-item-title">
-            {article.title}
-          </Link>
-          <div className="meta-time">
-            <Clock size={12} />
-            <span>{timeFormatted}</span>
-            {article.category && (
-              <span style={{ color: 'var(--primary)', fontWeight: 700, marginLeft: '0.35rem' }}>
-                • {article.category.name_bn}
-              </span>
-            )}
-          </div>
-        </div>
+      <article className="news-item">
+        <Link href={`/news/${article.slug}`} className="news-item__link">
+          {rank !== undefined && (
+            <span className="news-item__rank" aria-hidden="true">
+              {toBanglaNumber(rank)}
+            </span>
+          )}
 
-        <Link href={`/news/${article.slug}`} className="news-item-thumb" aria-label={article.title}>
-          <div className={`img-wrapper ${!imgLoaded ? 'img-skeleton' : ''}`} style={{ width: '100%', height: '100%' }}>
-            <img
-              src={article.featured_image || 'https://banglarface.com/logo.png'}
-              alt={article.title}
-              loading="lazy"
-              decoding="async"
-              onLoad={() => setImgLoaded(true)}
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                opacity: imgLoaded ? 1 : 0,
-                transition: 'opacity 0.25s ease',
-              }}
-            />
+          <div className="news-item__body">
+            <h3 className="news-item__title">{article.title}</h3>
+
+            <time className="news-item__meta" dateTime={article.published_at}>
+              {article.category && (
+                <span className="news-item__category">{article.category.name_bn}</span>
+              )}
+              {timeFormatted}
+            </time>
           </div>
+
+          {showThumb && (
+            <div className="news-item__thumb">
+              <img
+                src={article.featured_image || defaultFallbackImage}
+                alt={article.title}
+                loading="lazy"
+                decoding="async"
+                onLoad={() => setImgLoaded(true)}
+                style={{
+                  opacity: imgLoaded ? 1 : 0.8,
+                  transition: 'opacity 0.2s ease',
+                }}
+              />
+            </div>
+          )}
         </Link>
       </article>
     );
   }
 
+  // Standard news-card with sm / md / lg modifier
+  const cardModifier = variant === 'lg' ? 'news-card--lg' : variant === 'md' ? 'news-card--md' : 'news-card--sm';
+
   return (
-    <article className="news-card-sm">
-      <Link href={`/news/${article.slug}`} className="news-card-media" aria-label={article.title}>
-        <div className={`img-wrapper ${!imgLoaded ? 'img-skeleton' : ''}`} style={{ width: '100%', height: '100%' }}>
+    <article className={`news-card ${cardModifier}`}>
+      <Link href={`/news/${article.slug}`} className="news-card__link">
+        <div className="news-card__media">
           <img
-            src={article.featured_image || 'https://banglarface.com/logo.png'}
+            src={article.featured_image || defaultFallbackImage}
             alt={article.title}
             loading="lazy"
             decoding="async"
             onLoad={() => setImgLoaded(true)}
             style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              opacity: imgLoaded ? 1 : 0,
-              transition: 'opacity 0.25s ease',
+              opacity: imgLoaded ? 1 : 0.8,
+              transition: 'opacity 0.2s ease',
             }}
           />
-        </div>
-        {article.category && (
-          <span className="badge-category">{article.category.name_bn}</span>
-        )}
-      </Link>
 
-      <div className="news-card-body">
-        <div>
-          <Link href={`/news/${article.slug}`} className="news-card-title">
-            {article.title}
-          </Link>
-          {showExcerpt && article.excerpt && (
-            <p style={{ color: 'var(--text-sub)', fontSize: '0.88rem', marginBottom: '0.65rem', lineHeight: 1.55 }}>
-              {article.excerpt}
-            </p>
+          {article.category && (
+            <span className="news-card__badge">{article.category.name_bn}</span>
           )}
         </div>
 
-        <div className="meta-time">
-          <Clock size={12} />
-          <span>{timeFormatted}</span>
+        <div className="news-card__body">
+          <h3 className="news-card__title">{article.title}</h3>
+
+          {showExcerpt && article.excerpt && (
+            <p className="news-card__excerpt">{article.excerpt}</p>
+          )}
+
+          <time className="news-card__meta" dateTime={article.published_at}>
+            {timeFormatted}
+          </time>
         </div>
-      </div>
+      </Link>
     </article>
   );
 }
@@ -124,5 +125,5 @@ function getTimeAgo(dateString: string): string {
 
 function toBanglaNumber(num: number): string {
   const banglaDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-  return num.toString().replace(/\d/g, (d) => banglaDigits[parseInt(d, 10)]);
+  return num.toString().replace(/\d/g, (d) => banglaDigits[parseInt(d, 10)] || d);
 }
