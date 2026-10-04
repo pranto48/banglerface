@@ -26,9 +26,27 @@ export default async function RootLayout({
   const categories = await getCategories();
 
   return (
-    <html lang="bn" suppressHydrationWarning>
+    <html lang="bn" data-theme="light" suppressHydrationWarning>
       <head>
         <link rel="icon" href="https://banglarface.com/uploads/settings/favicon_1786447720_6a7b0768ee439.png" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var saved = localStorage.getItem('banglarface_theme');
+                  if (saved === 'dark') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                  } else {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                  }
+                } catch(e) {
+                  document.documentElement.setAttribute('data-theme', 'light');
+                }
+              })();
+            `,
+          }}
+        />
       </head>
       <body>
         <Header categories={categories} />

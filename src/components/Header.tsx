@@ -17,12 +17,12 @@ export default function Header({ categories }: HeaderProps) {
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('banglarface_theme') as 'light' | 'dark' | null;
-    if (savedTheme) {
-      setTheme(savedTheme);
-      document.documentElement.setAttribute('data-theme', savedTheme);
-    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    if (savedTheme === 'dark') {
       setTheme('dark');
       document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      setTheme('light');
+      document.documentElement.setAttribute('data-theme', 'light');
     }
   }, []);
 
