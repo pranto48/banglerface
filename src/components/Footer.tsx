@@ -82,30 +82,7 @@ export default function Footer() {
           </p>
         </div>
 
-        {/* Futuristic Cloud Architecture Badge */}
-        <div style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '5px 14px',
-              background: 'var(--pa-light)',
-              borderRadius: '20px',
-              border: '1px solid var(--border-color)',
-              fontSize: '12px',
-              color: 'var(--pa-muted)',
-            }}
-          >
-            <span>Next.js 15</span>
-            <span>•</span>
-            <span>Supabase DB</span>
-            <span>•</span>
-            <span>Cloudflare R2</span>
-            <span>•</span>
-            <span>Hosted on Vercel</span>
-          </div>
-        </div>
+
 
         {/* Copyright */}
         <div className="text-center">
